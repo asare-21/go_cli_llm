@@ -8,4 +8,3 @@ Simple CLI Chat. Ask Anything and GPT-4o will answer.
 go run .
 ```
 
-### Preview
