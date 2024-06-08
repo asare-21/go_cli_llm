@@ -45,17 +45,17 @@ func initialModel() model {
 	ta.Prompt = "| "
 	ta.CharLimit = 400
 
-	ta.SetWidth(100)
-	ta.SetHeight(1)
+	ta.SetWidth(80)
+	ta.SetHeight(2)
 
 	// Remove cursor line styling
 	ta.FocusedStyle.CursorLine = lipgloss.NewStyle()
 
-	ta.ShowLineNumbers = false
+	ta.ShowLineNumbers = true
 
-	vp := viewport.New(200, 3)
+	vp := viewport.New(80, 2)
 
-	ta.KeyMap.InsertNewline.SetEnabled(false)
+	//ta.KeyMap.InsertNewline.SetEnabled(false)
 
 	return model{
 		textarea:    ta,
@@ -88,14 +88,17 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		case tea.KeyEnter:
 			m.messages = append(m.messages, m.senderStyle.Render("You: ")+m.textarea.Value())
-			m.viewport.SetContent(strings.Join(m.messages, "\n\n"))
+			m.viewport.SetContent(strings.Join(m.messages, "\n"))
 
 			m.messages = append(m.messages, m.senderStyle.Render("LLM ")+ChatQuery(m.textarea.Value()))
-			m.viewport.SetContent(strings.Join(m.messages, "\n\n"))
+			m.viewport.SetContent(strings.Join(m.messages, "\n"))
 
 			m.textarea.Reset()
 			m.viewport.GotoBottom()
-
+		case tea.KeyUp:
+			m.viewport.HalfViewUp()
+		case tea.KeyDown:
+			m.viewport.LineDown(1)
 		}
 
 	// We handle errors just like any other message
